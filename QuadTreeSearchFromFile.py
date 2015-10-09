@@ -80,7 +80,7 @@ class BBox:
         return '{"maxLat":%f, "maxLon":%f, "minLat":%f, "minLon": %f}' % (self.maxLat, self.maxLon, self.minLat, self.minLon)
     def fileHandle(self):
         return '%1.2f_%1.2f_%1.2f_%1.2f' % (self.maxLat, self.maxLon, self.minLat, self.minLon)
-        
+
 def makeBBox(aBBoxDesc):
     return BBox(aBBoxDesc['maxLat'], aBBoxDesc['maxLon'], aBBoxDesc['minLat'], aBBoxDesc['minLon'])
 
@@ -138,9 +138,9 @@ class LeafNode:
         self.loaded = False
     def makeCSVFileName(self):
         return '%s-csv.json' % self.bbox.fileHandle()
-        
-            
-        
+
+
+
 class InternalNode:
     def __init__(self, bbox, nwNode, neNode, swNode, seNode):
         self.bbox = bbox
@@ -154,7 +154,7 @@ class InternalNode:
         for subTree in self.subTrees:
             if subTree.bbox.intersectEmpty(bbox): continue
             result.extend(subTree.findPoints(subTree.bbox.intersect(bbox)))
-            
+
         return result
     def showPoints(self):
         return [subTree.showPoints() for subTree in self.subTrees]
@@ -187,7 +187,7 @@ class InternalNode:
         for subTree in self.subTrees: subTree.load()
     def clear(self):
         for subTree in self.subTrees: subTree.clear()
-        
+
 def makeTree(aQTDesc, directory):
     bbox = makeBBox(aQTDesc['bbox'])
     if 'nw' in aQTDesc:
@@ -196,7 +196,7 @@ def makeTree(aQTDesc, directory):
         return LeafNode(bbox, '%s/%s' % (directory, aQTDesc['file']))
 
 def readEntry(year, month, res):
-    directory = 'db/qTrees/%s_%s_%s'  % (year, month, res)
+    directory = '../db/qTrees/%s_%s_%s'  % (year, month, res)
     f = open('%s/qTree.json' % directory, 'r')
     jstr = f.read()
     qtDesc = json.loads(jstr)
@@ -278,8 +278,8 @@ class QtDict:
             if (entry['res'] == '1'): continue
             qt = self.getQt(entry['year'], entry['month'], entry['res'])
             qt.clear()
-            
-        
+
+
 qtDict = QtDict()
 qtDict.setup()
 #
@@ -582,7 +582,7 @@ def parseRequest(request):
     bboxArray = json.loads(request.args.get('bboxes'))
     bboxes = [BBox(desc['nw']['lat'], desc['se']['lon'], desc['se']['lat'], desc['nw']['lon']) for desc in bboxArray]
     return (year, month, res, bboxes)
-    
+
 @app.route('/show_tree')
 def showTree():
     year = request.args.get('year')
@@ -609,7 +609,7 @@ def getTimes():
         return ('found %d points in %f milliseconds memory is %d') % (len(pts), ((b - a).microseconds)/1000, memory())
     else:
         return('No data for %s/%d, resolution %s' % (month, year, res))
-        
+
 
 
 @app.route('/get_values')
@@ -653,7 +653,7 @@ def load():
     print memory()
     cleanup()
     return('%s/%s resolution %s loaded, memory is %d' % (month, year, res, memory()))
-    
+
 
 if __name__ == '__main__':
     print memory()
